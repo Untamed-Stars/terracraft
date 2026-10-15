@@ -288,14 +288,41 @@
             1, 1, 1
         );
 
+        
+        const textureLoader = new THREE.TextureLoader();
+
+        function loadBlockTexture(filename) {
+            const texture = textureLoader.load(filename);
+            texture.colorSpace = THREE.SRGBColorSpace;
+            texture.magFilter = THREE.NearestFilter;
+            texture.minFilter = THREE.NearestFilter;
+            return texture;
+        }
+
+        const grassTop = loadBlockTexture("textures/grass-top.png");
+        const grassSide = loadBlockTexture("textures/grass-side.png");
+        const grassBottom = loadBlockTexture("textures/grass-bottom.png");
+
         const materials = {};
 
         for (const [type, info] of Object.entries(BLOCKS)) {
-            materials[type] = new THREE.MeshLambertMaterial({
-                color: info.color,
-                flatShading: true
-            });
+            if (type === "grass") {
+                materials.grass = [
+                    new THREE.MeshLambertMaterial({ map: grassSide }),   // right
+                    new THREE.MeshLambertMaterial({ map: grassSide }),   // left
+                    new THREE.MeshLambertMaterial({ map: grassTop }),    // top
+                    new THREE.MeshLambertMaterial({ map: grassBottom }), // bottom
+                    new THREE.MeshLambertMaterial({ map: grassSide }),   // front
+                    new THREE.MeshLambertMaterial({ map: grassSide })    // back
+                ];
+            } else {
+                materials[type] = new THREE.MeshLambertMaterial({
+                    color: info.color,
+                    flatShading: true
+                });
+            }
         }
+
 
         // ========================================
         // WORLD DATA
