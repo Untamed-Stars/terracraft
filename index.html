@@ -302,6 +302,7 @@
         const grassSide = loadBlockTexture("textures/grass-side.png");
         const grassBottom = loadBlockTexture("textures/grass-bottom.png");
         const dirtTexture = loadBlockTexture("textures/dirt.png");
+        const stoneTexture = loadBlockTexture("textures/stone.png");
 
         const materials = {};
 
@@ -322,6 +323,12 @@
                 materials.dirt = new THREE.MeshLambertMaterial({
                 map: dirtTexture
                 });
+
+            } else if (type === "stone") {
+                materials.stone = new THREE.MeshLambertMaterial({
+                map: stoneTexture
+                });
+            
             } else {
                 materials[type] = new THREE.MeshLambertMaterial({
                     color: info.color,
