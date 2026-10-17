@@ -84,6 +84,7 @@ TerraCraft is built using standard web technologies and a browser-based 3D rende
 | CSS | Styling and interface layout |
 | JavaScript | Gameplay logic and world systems |
 | Three.js r180 | 3D rendering, scene management, and graphics |
+| Piskel | Textures and skin designs |
 | GitHub Pages | Website hosting |
 
 Three.js allows TerraCraft to render and display its 3D world without requiring a separate game engine installation on the player's device.
