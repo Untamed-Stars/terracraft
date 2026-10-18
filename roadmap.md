@@ -18,7 +18,7 @@ Establish the core sandbox experience and make sure the existing mechanics work 
 - [x] Grass textures
 - [x] Dirt texture
 - [x] Stone texture
-- [ ] Sand texture
+- [x] Sand texture
 - [ ] Wood texture
 - [ ] Test and polish existing gameplay systems
 
