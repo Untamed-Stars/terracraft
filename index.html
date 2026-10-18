@@ -354,7 +354,9 @@
 
             } else if (type === "oakLeaves") {
                 materials.oakLeaves = new THREE.MeshLambertMaterial({
-                map: oakLeavesTexture
+                    map: oakLeavesTexture,
+                    transparent: true,
+                    alphaTest: 0.5
                 });
             
             } else {
@@ -747,7 +749,7 @@
                     event.code.slice(5)
                 );
 
-                if (number >= 1 && number <= 5) {
+                if (number >= 1 && number <= 6) {
                     selectedBlock = number - 1;
                     renderHotbar();
                 }
