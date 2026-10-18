@@ -264,8 +264,8 @@
                 color: 0x94602f
             },
 
-            leaves: {
-                name: "Leaves",
+            oakLeaves: {
+                name: "Oak Leaves",
                 color: 0x347d32
             },
 
@@ -281,6 +281,7 @@
             "stone",
             "oakLog",
             "sand"
+            "oakLeaves"
         ];
 
         const blockGeometry = new THREE.BoxGeometry(
@@ -307,6 +308,7 @@
         const oakLogTop = loadBlockTexture("textures/oak-log-topbottom.png");
         const oakLogBottom = loadBlockTexture("textures/oak-log-topbottom.png");
         const oakLogSide = loadBlockTexture("textures/oak-log-side.png");
+        const oakLeaves = loadBlockTexture("textures/oak-leaves.png");
 
         const materials = {};
 
@@ -349,6 +351,11 @@
                     
                     
                 ];
+
+            } else if (type === "oakLeaves") {
+                materials.oakLeaves = new THREE.MeshLambertMaterial({
+                map: oakLeavesTexture
+                });
             
             } else {
                 materials[type] = new THREE.MeshLambertMaterial({
@@ -548,7 +555,7 @@
                                 x + dx,
                                 crownY + dy,
                                 z + dz,
-                                "leaves"
+                                "oakLeaves"
                             );
                         }
                     }
@@ -558,7 +565,7 @@
                     x,
                     crownY + 1,
                     z,
-                    "leaves"
+                    "oakLeaves"
                 );
             }
         }
