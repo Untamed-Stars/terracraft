@@ -259,8 +259,8 @@
                 color: 0x858585
             },
 
-            wood: {
-                name: "Wood",
+            oakLog: {
+                name: "Oak Log",
                 color: 0x94602f
             },
 
@@ -279,7 +279,7 @@
             "grass",
             "dirt",
             "stone",
-            "wood",
+            "oakLog",
             "sand"
         ];
 
@@ -304,6 +304,9 @@
         const dirtTexture = loadBlockTexture("textures/dirt.png");
         const stoneTexture = loadBlockTexture("textures/stone.png");
         const sandTexture = loadBlockTexture("textures/sand.png");
+        const oakLogTop = loadBlockTexture("textures/oak-log-topbottom.png");
+        const oakLogBottom = loadBlockTexture("textures/oak-log-topbottom.png");
+        const oakLogSide = loadBlockTexture("textures/oak-log-side.png");
 
         const materials = {};
 
@@ -334,6 +337,18 @@
                 materials.sand = new THREE.MeshLambertMaterial({
                 map: sandTexture
                 });
+
+            } else if (type === "oakLog") {
+                materials.oakLog = [
+                    new THREE.MeshLambertMaterial({ map: oakLogSide }),   // right
+                    new THREE.MeshLambertMaterial({ map: oakLogSide }),   // left
+                    new THREE.MeshLambertMaterial({ map: oakLogTop }),    // top
+                    new THREE.MeshLambertMaterial({ map: oakLogBottom }), // bottom
+                    new THREE.MeshLambertMaterial({ map: oakLogSide }),   // front
+                    new THREE.MeshLambertMaterial({ map: oakLogSide })    // back
+                    
+                    
+                ];
             
             } else {
                 materials[type] = new THREE.MeshLambertMaterial({
