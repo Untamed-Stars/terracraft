@@ -498,6 +498,11 @@
                     getSkyLight(x, y + 1, z);
                 }
         }
+
+        function getBlockBrightness(x, y, z) {
+            const lightLevel = getSkyLight(x, y, z);
+            return lightLevel / MAX_LIGHT;
+        }
         
 // TEST
         function testSkyLighting() {
@@ -517,10 +522,13 @@
             if (world.has(key)) return false;
             if (!BLOCKS[type]) return false;
 
-            const mesh = new THREE.Mesh(
-                blockGeometry,
-                materials[type]
-            );
+            const sourceMaterial = materials[type];
+
+            const blockMaterial = Array.isArray(sourceMaterial)
+            ? sourceMaterial.map(material => material.clone())
+            : sourceMaterial.clone();
+
+            const mesh = new THREE.Mesh(blockGeometry, blockMaterial);
 
             mesh.position.set(x, y, z);
 
