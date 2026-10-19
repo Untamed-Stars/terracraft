@@ -380,6 +380,50 @@
             }
         }
 
+        
+        // ========================================
+        // BLOCK LIGHTING SHADER
+        // ========================================
+
+        function addBlockLightingShader(material) {
+            material.onBeforeCompile = (shader) => {
+                shader.uniforms.uBlockBrightness = {
+                    value: 1.0
+                };
+
+                // Remember the shader so each block can
+                // supply its own brightness.
+                material.userData.blockLightingShader = shader;
+
+                shader.fragmentShader =
+                    "uniform float uBlockBrightness;\n" +
+                    shader.fragmentShader;
+
+                shader.fragmentShader =
+                    shader.fragmentShader.replace(
+                        "#include <color_fragment>",
+                        `#include <color_fragment>
+                        diffuseColor.rgb *= uBlockBrightness;`
+                    );
+            };
+
+            material.customProgramCacheKey = () =>
+                "terracraft-block-lighting-v1";
+        }
+
+        // Prepare every shared material, including
+        // the separate grass and oak-log face materials.
+        for (const materialGroup of Object.values(materials)) {
+            const materialList = Array.isArray(materialGroup)
+                ? materialGroup
+                : [materialGroup];
+
+            for (const material of materialList) {
+                addBlockLightingShader(material);
+            }
+        }
+
+
 
         // ========================================
         // WORLD DATA
@@ -491,12 +535,15 @@
         }
 
         function updateBlockLighting() {
-            for (const [key, block] of world) {
+            for (const block of world.values()) {
                 const { x, y, z } = block.mesh.userData;
 
-                block.mesh.userData.skyLight =
-                    getSkyLight(x, y + 1, z);
-                }
+                const lightLevel = getSkyLight(x, y + 1, z);
+
+                block.mesh.userData.skyLight = lightLevel;
+                block.mesh.userData.brightness =
+                    lightLevel / MAX_LIGHT;
+            }
         }
 
         function getBlockBrightness(x, y, z) {
@@ -522,13 +569,30 @@
             if (world.has(key)) return false;
             if (!BLOCKS[type]) return false;
 
-            const sourceMaterial = materials[type];
+            const mesh = new THREE.Mesh(blockGeometry, materials[type]);
 
-            const blockMaterial = Array.isArray(sourceMaterial)
-            ? sourceMaterial.map(material => material.clone())
-            : sourceMaterial.clone();
+            
+            mesh.onBeforeRender = () => {
+                const brightness =
+                    mesh.userData.brightness ?? 1.0;
 
-            const mesh = new THREE.Mesh(blockGeometry, blockMaterial);
+                const sourceMaterial = mesh.material;
+
+                const materialList = Array.isArray(sourceMaterial)
+                    ? sourceMaterial
+                    : [sourceMaterial];
+
+                for (const material of materialList) {
+                    const shader =
+                        material.userData.blockLightingShader;
+
+                    if (shader) {
+                        shader.uniforms.uBlockBrightness.value =
+                            brightness;
+                    }
+                }
+            };
+
 
             mesh.position.set(x, y, z);
 
