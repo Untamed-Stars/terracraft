@@ -391,6 +391,18 @@
         const WORLD_SIZE = 24;
         const WORLD_HALF = WORLD_SIZE / 2;
 
+        // ========================================
+        // VOXEL LIGHTING DATA
+        // ========================================
+
+        const skyLight = new Map();
+
+        const MAX_LIGHT = 15;
+        const MIN_LIGHT = 0;
+
+        // Highest position checked for direct sunlight.
+        const LIGHT_MAX_Y = 32;
+
         function blockKey(x, y, z) {
             return `${x},${y},${z}`;
         }
@@ -398,6 +410,92 @@
         function getBlock(x, y, z) {
             return world.get(blockKey(x, y, z));
         }
+
+        
+        function getSkyLight(x, y, z) {
+            return skyLight.get(blockKey(x, y, z)) ?? 0;
+        }
+
+        function setSkyLight(x, y, z, level) {
+            const key = blockKey(x, y, z);
+
+            if (level <= MIN_LIGHT) {
+                skyLight.delete(key);
+            } else {
+                skyLight.set(key, Math.min(MAX_LIGHT, level));
+            }
+        }
+
+        function isLightBlocking(x, y, z) {
+            const block = getBlock(x, y, z);
+
+            if (!block) return false;
+
+            // Leaves let some light through.
+            return block.type !== "oakLeaves";
+        }
+
+        function calculateSkyLight() {
+            skyLight.clear();
+
+            const queue = [];
+
+            // Step 1: Find positions exposed to the sky.
+            for (let x = -WORLD_HALF; x < WORLD_HALF; x++) {
+                for (let z = -WORLD_HALF; z < WORLD_HALF; z++) {
+                    for (let y = LIGHT_MAX_Y; y >= 0; y--) {
+                        if (isLightBlocking(x, y, z)) {
+                            break;
+                        }
+
+                        setSkyLight(x, y, z, MAX_LIGHT);
+                        queue.push([x, y, z]);
+                    }
+                }
+            }
+
+            // Step 2: Spread light into neighbouring positions.
+            const directions = [
+                [1, 0, 0],
+                [-1, 0, 0],
+                [0, 1, 0],
+                [0, -1, 0],
+                [0, 0, 1],
+                [0, 0, -1]
+            ];
+
+            let head = 0;
+
+            while (head < queue.length) {
+                const [x, y, z] = queue[head++];
+                const currentLevel = getSkyLight(x, y, z);
+
+                if (currentLevel <= 1) continue;
+
+                for (const [dx, dy, dz] of directions) {
+                    const nx = x + dx;
+                    const ny = y + dy;
+                    const nz = z + dz;
+
+                    if (ny < 0 || ny > LIGHT_MAX_Y) continue;
+                    if (isLightBlocking(nx, ny, nz)) continue;
+
+                    const nextLevel = currentLevel - 1;
+
+                    if (nextLevel > getSkyLight(nx, ny, nz)) {
+                        setSkyLight(nx, ny, nz, nextLevel);
+                        queue.push([nx, ny, nz]);
+                    }
+                }
+            }
+        }
+// TEST
+        function testSkyLighting() {
+    console.log("Open sky:", getSkyLight(0, 20, 0));
+    console.log("Above terrain:", getSkyLight(0, terrainHeight(0, 0) + 1, 0));
+    console.log("Below terrain:", getSkyLight(0, 0, 0));
+}
+
 
         function addBlock(x, y, z, type) {
             x = Math.round(x);
@@ -621,6 +719,8 @@
         }
 
         generateWorld();
+        calculateSkyLight();
+        testSkyLighting();
 
         // ========================================
         // PLAYER
