@@ -19,8 +19,8 @@ Establish the core sandbox experience and make sure the existing mechanics work 
 - [x] Dirt texture
 - [x] Stone texture
 - [x] Sand texture
-- [ ] Wood texture
-- [ ] Test and polish existing gameplay systems
+- [x] Wood texture
+- [x] Test and polish existing gameplay systems
 
 ## 🌞 Phase 2: Lighting and Visuals
 
