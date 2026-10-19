@@ -82,8 +82,8 @@
         /* Individual slots */
 
         .slot {
-            width: 66px;
-            height: 68px;
+            width: 52px;
+            height: 52px;
             box-sizing: border-box;
 
             border: 2px solid #555;
@@ -91,18 +91,9 @@
             background: #292929ee;
 
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 5px;
-
-            color: #f0e9e1;
-            font-family: Arial, sans-serif;
-            font-size: 11px;
-            white-space: nowrap;
         }
-
-        /* Currently selected slot */
 
         .slot.selected {
             border-color: #d8894d;
@@ -110,13 +101,11 @@
             transform: translateY(-4px);
         }
 
-        /* Block preview */
-
         .swatch {
-            width: 26px;
-            height: 26px;
-            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
             box-sizing: border-box;
+            flex-shrink: 0;
 
             border: 1px solid #ffffff66;
         }
@@ -696,12 +685,8 @@
                         .toString(16)
                         .padStart(6, "0");
 
-                const label = document.createElement("span");
-                label.textContent =
-                    `${index + 1}: ${BLOCKS[type].name}`;
-
                 slot.appendChild(swatch);
-                slot.appendChild(label);
+                
                 hotbar.appendChild(slot);
             });
         }
