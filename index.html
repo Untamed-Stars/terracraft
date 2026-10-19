@@ -573,8 +573,10 @@
 
             
             mesh.onBeforeRender = () => {
-                const brightness =
+                const brightness = Math.max(
+                    0.35,
                     mesh.userData.brightness ?? 1.0;
+                );
 
                 const sourceMaterial = mesh.material;
 
