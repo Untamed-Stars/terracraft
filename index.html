@@ -489,6 +489,16 @@
                 }
             }
         }
+
+        function updateBlockLighting() {
+            for (const [key, block] of world) {
+                const { x, y, z } = block.mesh.userData;
+
+                block.mesh.userData.skyLight =
+                    getSkyLight(x, y + 1, z);
+                }
+        }
+        
 // TEST
         function testSkyLighting() {
     console.log("Open sky:", getSkyLight(0, 20, 0));
@@ -517,6 +527,8 @@
             mesh.userData = {
                 x, y, z, type
             };
+
+            mesh.userData.skyLight = getSkyLight(x, y + 1, z);
 
             scene.add(mesh);
 
@@ -720,6 +732,7 @@
 
         generateWorld();
         calculateSkyLight();
+        updateBlockLighting();
         testSkyLighting();
 
         // ========================================
