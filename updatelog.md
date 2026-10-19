@@ -8,4 +8,5 @@
   - Added sand textures
   - Added oak log and oak leaves textures
   - Made the oak leaves texture partially transparent
+  - Removed block names from the hotbar
 
